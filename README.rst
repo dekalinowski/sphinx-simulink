@@ -16,6 +16,8 @@ Usage
 
 (todo: text description for below)
 
+.. code-block:: rest
+
     .. simulink-diagram:: SimulinkModelName
         :dir: optional/path/to/model
         :addpath: optional/dependency/paths;support/list/of/directories;C:/absolute/paths/as/well
