@@ -28,7 +28,9 @@ TODO
 ------------------------------------------------------------------------------
 
 Just finished a working version after a day's work... Need to clean up:
+
 #. Finish README
+#. Include example model input and output diagram
 #. Create Python package
 #. Change image filename hash to include contents of Simulink and preload script (dependencies as well?) -- this will help trigger refresh of diagrams
 #. Delete the cached render image from the temporary directory, whenever running "clean" in Sphinx
