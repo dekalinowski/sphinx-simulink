@@ -1,9 +1,35 @@
 ==============================================================================
-sphinx-simulink
+Simulink diagrams embedded in .rst documentation
 ==============================================================================
 
-Python Sphinx plugin to include MATLAB Simulink models (e.g. diagrams or
-information) into .rst documentation
+The ``simulink-diagram`` directive requires at minimum one argument specifying
+the Simulink ``system``:
+
+.. code-block:: rest
+
+    .. simulink-diagram:: System
+
+Additional options exist, including:
+
+* ``dir``: the directory containing ``system``
+* ``addpath``: one or more directories containing dependencies needed by the
+  ``system`` (if multiple directories, use a semi-colon, e.g. path1;path2;path3)
+* ``preload``: specify a MATLAB script file (.m) to load before opening the
+  ``system`` for print
+* ``subsystem``: the layer in the ``system`` to navigate and print from
+
+Note: All directories may be specified either as relative to the .rst document
+or an absolute path. If a list of directories, a mix of both may be employed.
+
+.. code-block:: rest
+
+    .. simulink-diagram:: System
+        :dir: optional/path/to/model
+        :addpath: optional/dependency/path;another/path/to/a/dependency;
+            feel/free/to/split/across/lines;C:/And/With/Absolute/Paths
+        :preload: optional_preload.m
+        :subsystem: SubsystemLayerInModel/At/Any/Depth
+
 
 Dependencies
 ------------------------------------------------------------------------------
@@ -11,28 +37,9 @@ Dependencies
 Sphinx (see http://www.sphinx-doc.org)
 matlab.engine (see MathWorks documentation, first introduced in R2014B)
 
-Usage
+Example
 ------------------------------------------------------------------------------
 
-(todo: text description for below)
-
-.. code-block:: rest
-
-    .. simulink-diagram:: SimulinkModelName
-        :dir: optional/path/to/model
-        :addpath: optional/dependency/paths;support/list/of/directories;C:/absolute/paths/as/well
-        :preload: preload_script.m
-        :subsystem: SubsystemLayerInModel
-
-TODO
-------------------------------------------------------------------------------
-
-Just finished a working version after a day's work... Need to clean up:
-
-#. Finish README
-#. Include example model input and output diagram
-#. Create Python package
-#. Change image filename hash to include contents of Simulink and preload script (dependencies as well?) -- this will help trigger refresh of diagrams
-#. Delete the cached render image from the temporary directory, whenever running "clean" in Sphinx
+Please look in this repository's "example" folder for an example.
 
 

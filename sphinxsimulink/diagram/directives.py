@@ -65,8 +65,9 @@ class SimulinkDiagramDirective(images.Figure):
             ).hexdigest()
         )
 
-        # FIXME: change filename hash to include contents of preload script
-        # and simulink system model
+        # FIXME: change filename hash to include contents of preload script,
+        # simulink system model, and other dependencies...
+        # use as mechanism to reuse cache, and delete on clean job
 
         # make a unique filename for the Simulink model
         hash = hashlib.sha1( repr( sorted( diagram_options.items() ) )

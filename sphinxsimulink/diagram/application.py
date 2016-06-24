@@ -19,12 +19,18 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir
 
 from sphinxsimulink.diagram import directives,nodes
+from sphinxsimulink.metadata import __version__
+
+
+engine = None
 
 
 class SimulinkDiagramError(SphinxError):
     pass
 
 def render_diagram(app, node, docname):
+
+    global engine
 
     uri = node['uri']
 
@@ -36,7 +42,15 @@ def render_diagram(app, node, docname):
 
     try:
 
-        engine = matlab.engine.start_matlab()
+        # reuse last engine to save loading time
+        if engine == None:
+            engine = matlab.engine.start_matlab()
+        else:
+            # clean up used engines
+            engine.restoredefaultpath(nargout=0)
+            engine.close('all', nargout=0)
+            engine.bdclose('all', nargout=0)
+            engine.clear('classes', nargout=0)
 
         # start engine from document directory
         engine.cd( os.path.dirname( app.env.doc2path( docname ) ) )
@@ -62,19 +76,22 @@ def render_diagram(app, node, docname):
         if system:
             engine.load_system( system );
 
-        # print either subsystem (priority if specified) or system
-        system = node.get('subsystem') or system
-        engine.eval("print -s{} -dpng {};".format( system, uri ),
+        # if subsystem specified, print from this layer
+        subsystem = node.get('subsystem')
+        if subsystem:
+            system = "/".join( [ system, subsystem ] )
+
+        # print from Simulink handle to .png
+        engine.eval(
+            "print( get_param( '{}', 'Handle' ), '-dpng', '{}' )".
+                format( system, uri ),
             nargout=0
-        )
+            )
 
     except matlab.engine.MatlabExecutionError as err:
         raise SimulinkDiagramError('Unable to render Simulink diagram due ' +
             'to MATLAB execution error'
         )
-
-    finally:
-        engine.quit()
 
 
 def process_diagram_nodes(app, doctree, docname):
@@ -84,13 +101,23 @@ def process_diagram_nodes(app, doctree, docname):
         node.replace_self(node.children)
 
 
+def terminate_matlab_engine(app, exception):
+
+    global engine
+
+    if engine is not None:
+
+        engine.quit()
+        engine = None
+
+
 def setup(app):
 
     app.add_directive('simulink-diagram', directives.SimulinkDiagramDirective)
 
     app.connect('doctree-resolved', process_diagram_nodes)
+    app.connect('build-finished', terminate_matlab_engine)
 
-    # TODO: link to a version number from setup
-    return {'version': '0.0'}
+    return {'version': __version__}
 
 
