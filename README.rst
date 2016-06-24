@@ -34,8 +34,10 @@ or an absolute path. If a list of directories, a mix of both may be employed.
 Dependencies
 ------------------------------------------------------------------------------
 
-Sphinx (see http://www.sphinx-doc.org)
-matlab.engine (see MathWorks documentation, first introduced in R2014B)
+Ensure you install the following into your Python environment:
+
+* Sphinx (see http://www.sphinx-doc.org)
+* matlab.engine (see MathWorks documentation, first introduced in R2014B)
 
 Example
 ------------------------------------------------------------------------------
